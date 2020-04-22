@@ -236,6 +236,7 @@ module.exports = function(grunt) {
       }
     },
     clean: {
+      cache: ['browserify-cache*.json'],
       dist: ['dist/'],
       js: ['dist/*.js']
     },
