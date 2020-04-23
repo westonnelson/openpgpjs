@@ -929,7 +929,7 @@ describe('Streaming', function() {
   });
 
   if (openpgp.util.detectNode()) {
-    const fs = util.nodeRequire('fs');
+    const fs = require('fs');
 
     it('Node: Encrypt and decrypt text message roundtrip', async function() {
       dataArrived(); // Do not wait until data arrived.

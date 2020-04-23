@@ -63,10 +63,6 @@ function loadElliptic() {
   if (!config.externalIndutnyElliptic) {
     return require('elliptic');
   }
-  if (util.detectNode()) {
-    // eslint-disable-next-line
-    return require(config.indutnyEllipticPath);
-  }
   if (!ellipticPromise) {
     ellipticPromise = loadEllipticPromise().catch(e => {
       ellipticPromise = undefined;
