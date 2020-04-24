@@ -70,6 +70,7 @@ module.exports = function(grunt) {
         files: {
           'dist/openpgp.min.js' : ['dist/openpgp.js'],
           'dist/openpgp.min.mjs' : ['dist/openpgp.mjs'],
+          'dist/compat/openpgp.min.js' : ['dist/compat/openpgp.js'],
           'dist/lightweight/openpgp.min.js' : ['dist/lightweight/openpgp.js'],
           'dist/lightweight/openpgp.min.mjs' : ['dist/lightweight/openpgp.mjs']
         },
