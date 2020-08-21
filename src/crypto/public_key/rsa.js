@@ -333,7 +333,7 @@ export async function validateParams(n, e, d, p, q, u) {
   return true;
 }
 
-async function bnSign(hash_algo, n, d, hashed) {
+export async function bnSign(hash_algo, n, d, hashed) {
   const BigInteger = await util.getBigInteger();
   n = new BigInteger(n);
   const m = new BigInteger(await emsaEncode(hash_algo, hashed, n.byteLength()));
@@ -344,7 +344,7 @@ async function bnSign(hash_algo, n, d, hashed) {
   return m.modExp(d, n).toUint8Array('be', n.byteLength());
 }
 
-async function webSign(hash_name, data, n, e, d, p, q, u) {
+export async function webSign(hash_name, data, n, e, d, p, q, u) {
   /** OpenPGP keys require that p < q, and Safari Web Crypto requires that p > q.
    * We swap them in privateToJwk, so it usually works out, but nevertheless,
    * not all OpenPGP keys are compatible with this requirement.
@@ -361,7 +361,7 @@ async function webSign(hash_name, data, n, e, d, p, q, u) {
   return new Uint8Array(await webCrypto.sign({ "name": "RSASSA-PKCS1-v1_5", "hash": hash_name }, key, data));
 }
 
-async function nodeSign(hash_algo, data, n, e, d, p, q, u) {
+export async function nodeSign(hash_algo, data, n, e, d, p, q, u) {
   const { default: BN } = await import('bn.js');
   const pBNum = new BN(p);
   const qBNum = new BN(q);
@@ -394,7 +394,7 @@ async function nodeSign(hash_algo, data, n, e, d, p, q, u) {
   return new Uint8Array(sign.sign(pem));
 }
 
-async function bnVerify(hash_algo, s, n, e, hashed) {
+export async function bnVerify(hash_algo, s, n, e, hashed) {
   const BigInteger = await util.getBigInteger();
   n = new BigInteger(n);
   s = new BigInteger(s);
@@ -407,7 +407,7 @@ async function bnVerify(hash_algo, s, n, e, hashed) {
   return util.equalsUint8Array(EM1, EM2);
 }
 
-async function webVerify(hash_name, data, s, n, e) {
+export async function webVerify(hash_name, data, s, n, e) {
   const jwk = publicToJwk(n, e);
   const key = await webCrypto.importKey("jwk", jwk, {
     name: "RSASSA-PKCS1-v1_5",
@@ -417,7 +417,7 @@ async function webVerify(hash_name, data, s, n, e) {
   return webCrypto.verify({ "name": "RSASSA-PKCS1-v1_5", "hash": hash_name }, key, s, data);
 }
 
-async function nodeVerify(hash_algo, data, s, n, e) {
+export async function nodeVerify(hash_algo, data, s, n, e) {
   const { default: BN } = await import('bn.js');
 
   const verify = nodeCrypto.createVerify(enums.read(enums.hash, hash_algo));
@@ -443,7 +443,7 @@ async function nodeVerify(hash_algo, data, s, n, e) {
   }
 }
 
-async function nodeEncrypt(data, n, e) {
+export async function nodeEncrypt(data, n, e) {
   const { default: BN } = await import('bn.js');
 
   const keyObject = {
@@ -463,7 +463,7 @@ async function nodeEncrypt(data, n, e) {
   return new Uint8Array(nodeCrypto.publicEncrypt(key, data));
 }
 
-async function bnEncrypt(data, n, e) {
+export async function bnEncrypt(data, n, e) {
   const BigInteger = await util.getBigInteger();
   n = new BigInteger(n);
   data = new BigInteger(await emeEncode(data, n.byteLength()));
@@ -474,7 +474,7 @@ async function bnEncrypt(data, n, e) {
   return data.modExp(e, n).toUint8Array('be', n.byteLength());
 }
 
-async function nodeDecrypt(data, n, e, d, p, q, u) {
+export async function nodeDecrypt(data, n, e, d, p, q, u) {
   const { default: BN } = await import('bn.js');
 
   const pBNum = new BN(p);
@@ -512,7 +512,7 @@ async function nodeDecrypt(data, n, e, d, p, q, u) {
   }
 }
 
-async function bnDecrypt(data, n, e, d, p, q, u) {
+export async function bnDecrypt(data, n, e, d, p, q, u) {
   const BigInteger = await util.getBigInteger();
   data = new BigInteger(data);
   n = new BigInteger(n);

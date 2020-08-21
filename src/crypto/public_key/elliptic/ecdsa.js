@@ -169,7 +169,7 @@ async function ellipticSign(curve, hashed, privateKey) {
   };
 }
 
-async function ellipticVerify(curve, signature, digest, publicKey) {
+export async function ellipticVerify(curve, signature, digest, publicKey) {
   const indutnyCurve = await getIndutnyCurve(curve.name);
   const key = keyFromPublic(indutnyCurve, publicKey);
   return key.verify(digest, signature);

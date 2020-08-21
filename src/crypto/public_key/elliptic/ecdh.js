@@ -57,7 +57,7 @@ export async function validateParams(oid, Q, d) {
 }
 
 // Build Param for ECDH algorithm (RFC 6637)
-function buildEcdhParam(public_algo, oid, kdfParams, fingerprint) {
+export function buildEcdhParam(public_algo, oid, kdfParams, fingerprint) {
   return util.concatUint8Array([
     oid.write(),
     new Uint8Array([public_algo]),
@@ -68,7 +68,7 @@ function buildEcdhParam(public_algo, oid, kdfParams, fingerprint) {
 }
 
 // Key Derivation Function (RFC 6637)
-async function kdf(hash_algo, X, length, param, stripLeading = false, stripTrailing = false) {
+export async function kdf(hash_algo, X, length, param, stripLeading = false, stripTrailing = false) {
   // Note: X is little endian for Curve25519, big-endian for all others.
   // This is not ideal, but the RFC's are unclear
   // https://tools.ietf.org/html/draft-ietf-openpgp-rfc4880bis-02#appendix-B
@@ -99,7 +99,7 @@ async function kdf(hash_algo, X, length, param, stripLeading = false, stripTrail
  * @returns {Promise<{publicKey: Uint8Array, sharedKey: Uint8Array}>}
  * @async
  */
-async function genPublicEphemeralKey(curve, Q) {
+export async function genPublicEphemeralKey(curve, Q) {
   switch (curve.type) {
     case 'curve25519': {
       const d = await getRandomBytes(32);
@@ -156,7 +156,7 @@ export async function encrypt(oid, kdfParams, data, Q, fingerprint) {
  * @returns {Promise<{secretKey: Uint8Array, sharedKey: Uint8Array}>}
  * @async
  */
-async function genPrivateEphemeralKey(curve, V, Q, d) {
+export async function genPrivateEphemeralKey(curve, V, Q, d) {
   if (d.length !== curve.payloadSize) {
     const privateKey = new Uint8Array(curve.payloadSize);
     privateKey.set(d, curve.payloadSize - d.length);
@@ -224,7 +224,7 @@ export async function decrypt(oid, kdfParams, V, C, Q, d, fingerprint) {
  * @returns {Promise<{secretKey: Uint8Array, sharedKey: Uint8Array}>}
  * @async
  */
-async function webPrivateEphemeralKey(curve, V, Q, d) {
+export async function webPrivateEphemeralKey(curve, V, Q, d) {
   const recipient = privateToJwk(curve.payloadSize, curve.web.web, Q, d);
   let privateKey = webCrypto.importKey(
     "jwk",
@@ -324,7 +324,7 @@ async function webPublicEphemeralKey(curve, Q) {
  * @returns {Promise<{secretKey: Uint8Array, sharedKey: Uint8Array}>}
  * @async
  */
-async function ellipticPrivateEphemeralKey(curve, V, d) {
+export async function ellipticPrivateEphemeralKey(curve, V, d) {
   const indutnyCurve = await getIndutnyCurve(curve.name);
   V = keyFromPublic(indutnyCurve, V);
   d = keyFromPrivate(indutnyCurve, d);
@@ -364,7 +364,7 @@ async function ellipticPublicEphemeralKey(curve, Q) {
  * @returns {Promise<{secretKey: Uint8Array, sharedKey: Uint8Array}>}
  * @async
  */
-async function nodePrivateEphemeralKey(curve, V, d) {
+export async function nodePrivateEphemeralKey(curve, V, d) {
   const recipient = nodeCrypto.createECDH(curve.node.node);
   recipient.setPrivateKey(d);
   const sharedKey = new Uint8Array(recipient.computeSecret(V));
